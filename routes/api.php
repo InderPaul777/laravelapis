@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\Permission\PermissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Role\RoleController;
@@ -23,3 +24,8 @@ Route::get('allroles', [RoleController::class, 'getAllRoles']);
 Route::get('roledetail/{id}',[RoleController::class, 'roleDetail']);
 Route::patch('updaterole/{id}',[RoleController::class,'updateRole']);
 Route::delete('deleterole/{id}',[RoleController::class,'deleteRole']);
+Route::post('permission', [PermissionController::class,'createPermission'])->name('permission');
+Route::get('allpermissions', [PermissionController::class, 'getAllPermissions']);
+Route::get('permissiondetail/{id}',[PermissionController::class, 'permissionDetail']);
+Route::patch('updatepermission/{id}',[PermissionController::class,'updatePermission']);
+Route::delete('deletepermission/{id}',[PermissionController::class,'deletePermission']);
