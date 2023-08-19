@@ -45,8 +45,12 @@ class UserController extends Controller
             $data['role_id'] = implode(',', $input['role_id']);
             $sendPassword = rand();
             $data['password'] = bcrypt($sendPassword);
-            $user = User::create($data); 
-            $data['sendPassword'] = $sendPassword;
+            $user = User::create($data);
+            if(config('app.SEND_LINK_OR_PASSWORD_IN_MAIL') == 0) {
+                $data['sendPassword'] = 'Your password is ('.$sendPassword.').';
+            }else {
+                $data['sendPassword'] = 'Your create password link is here http://127.0.0.1:8000/api/user/setPassword/'.$data['id'];
+            }
             Mail::to($input['email'])->send(new RegisterMail($data));
             return response()->json(['message'=>'Account created successfully, password details sent on mail.'], $this->successStatus);
         }

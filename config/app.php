@@ -123,6 +123,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'SEND_LINK_OR_PASSWORD_IN_MAIL' => env('SEND_LINK_OR_PASSWORD_IN_MAIL', 0),
+
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers

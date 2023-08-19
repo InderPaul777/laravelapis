@@ -93,7 +93,7 @@
         <h1 class="heading"></h1>
         <p >Hi {{$name}} ,</p>
         <p>Thank you for registered with us.</p>
-        <p>Please login for more details. Your password is ({{$password}}).</p>
+        <p>Please login for more details. {{$password}}</p>
     
         <div class="text-div">Thanks,</div>
         <div class="text-div">Ditstek.</div>
