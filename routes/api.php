@@ -1,4 +1,4 @@
-a<?php
+<?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\Role\RoleController;
 use App\Http\Controllers\Admin\Permission\PermissionController;
 use App\Http\Controllers\FrontController;
+use App\Http\Middleware\CheckPermission;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +26,10 @@ Route::get('/user/{id}', [UserController::class, 'userDetails'])->name('getUserD
 Route::patch('/user/{id}', [UserController::class, 'update'])->name('updateUser');
 Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
 
-// Auth::routes();
+Auth::routes();
 Route::middleware(['auth'])->group(function () {
-    Route::post('/user/assignPermissions', [UserController::class, 'assignPermissions'])->name('assignPermissions');
-    Route::post('/user/updatePermissions', [UserController::class, 'updatePermissions'])->name('updatePermissions');
+    Route::post('/user/assignPermissions', [UserController::class, 'assignPermissions'])->name('assignPermissions')->middleware('check-permission:admin|superadmin');
+    Route::post('/user/updatePermissions', [UserController::class, 'updatePermissions'])->name('updatePermissions')->middleware('check-permission:admin|superadmin');
 });
 
 Route::post('/user/registration', [FrontController::class, 'registration'])->name('registerUser');
