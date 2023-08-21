@@ -1,4 +1,4 @@
-<?php
+a<?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,33 +17,38 @@ use App\Http\Controllers\FrontController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::post('/user', [UserController::class, 'user']);
-Route::get('/users', [UserController::class, 'users']);
-Route::get('/user/{id}', [UserController::class, 'userDetails']);
-Route::patch('/user/{id}', [UserController::class, 'update']);
-Route::delete('/user/{id}', [UserController::class, 'destroy']);
 
-Route::post('/user/assignPermissions', [UserController::class, 'assignPermissions']);
-Route::post('/user/updatePermissions', [UserController::class, 'updatePermissions']);
+Route::get('/permissions-update', [UserController::class, 'permissions']);
+Route::post('/user', [UserController::class, 'user'])->name('createUser');
+Route::get('/users', [UserController::class, 'users'])->name('getUsers');
+Route::get('/user/{id}', [UserController::class, 'userDetails'])->name('getUserDetails');
+Route::patch('/user/{id}', [UserController::class, 'update'])->name('updateUser');
+Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
 
-Route::post('/user/registration', [FrontController::class, 'registration']);
-Route::post('/user/login', [FrontController::class, 'login']);
-Route::get('/refreshToken', [FrontController::class, 'refreshToken']);
-Route::post('/user/forgotPassword', [FrontController::class, 'forgotPassword']);
-Route::post('/user/resetPassword', [FrontController::class, 'resetPassword']);
-Route::post('/user/changePassword/{id}', [FrontController::class, 'changePassword']);
+// Auth::routes();
+Route::middleware(['auth'])->group(function () {
+    Route::post('/user/assignPermissions', [UserController::class, 'assignPermissions'])->name('assignPermissions');
+    Route::post('/user/updatePermissions', [UserController::class, 'updatePermissions'])->name('updatePermissions');
+});
 
-Route::post('role', [RoleController::class,'createRole'])->name('role');
-Route::get('roles', [RoleController::class, 'getAllRoles']);
-Route::get('role/{id}',[RoleController::class, 'roleDetail']);
-Route::patch('role/{id}',[RoleController::class,'updateRole']);
-Route::delete('role/{id}',[RoleController::class,'deleteRole']);
+Route::post('/user/registration', [FrontController::class, 'registration'])->name('registerUser');
+Route::post('/user/login', [FrontController::class, 'login'])->name('loginUser');
+Route::get('/refreshToken', [FrontController::class, 'refreshToken'])->name('refreshToken');
+Route::post('/user/forgotPassword', [FrontController::class, 'forgotPassword'])->name('forgotPassword');
+Route::post('/user/resetPassword', [FrontController::class, 'resetPassword'])->name('resetPassword');
+Route::post('/user/changePassword/{id}', [FrontController::class, 'changePassword'])->name('changePassword');
 
-Route::post('permission', [PermissionController::class,'createPermission'])->name('permission');
-Route::get('permissions', [PermissionController::class, 'getAllPermissions']);
-Route::get('permission/{id}',[PermissionController::class, 'permissionDetail']);
-Route::patch('permission/{id}',[PermissionController::class,'updatePermission']);
-Route::delete('permission/{id}',[PermissionController::class,'deletePermission']);
+Route::post('role', [RoleController::class,'createRole'])->name('role')->name('createRole');
+Route::get('roles', [RoleController::class, 'getAllRoles'])->name('getRoles');
+Route::get('role/{id}',[RoleController::class, 'roleDetail'])->name('getRoleDetails');
+Route::patch('role/{id}',[RoleController::class,'updateRole'])->name('updateRole');
+Route::delete('role/{id}',[RoleController::class,'deleteRole'])->name('deleteRole');
+
+Route::post('permission', [PermissionController::class,'createPermission'])->name('createPermission');
+Route::get('permissions', [PermissionController::class, 'getAllPermissions'])->name('getPermissions');
+Route::get('permission/{id}',[PermissionController::class, 'permissionDetail'])->name('getPermissionDetails');
+Route::patch('permission/{id}',[PermissionController::class,'updatePermission'])->name('updatePermission');
+Route::delete('permission/{id}',[PermissionController::class,'deletePermission'])->name('deletePermission');
 
 Route::fallback(function(){
     return response()->json([
