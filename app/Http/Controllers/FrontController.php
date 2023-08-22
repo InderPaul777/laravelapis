@@ -49,17 +49,18 @@ class FrontController extends Controller
             $data['id'] = Str::uuid()->toString();
             $data['first_name'] = $input['first_name'];
             $data['last_name'] = $input['last_name'];
+            if(isset($data['middle_name'])){
             $data['middle_name'] = $input['middle_name'];
+            }
             $data['email'] = $input['email'];
             $data['verified'] = 1;
             $data['is_active'] = 1;
-            $data['role_id'] = '';
             $data['password'] = bcrypt($input['password']);
             $user = User::create($data);
             Mail::to($input['email'])->send(new FrontRegisterMail($data));
             return response()->json(['message'=>'Account created successfully, password details sent on mail.'], $this->successStatus);
         }
-        catch(Exception $e)
+        catch(\Exception $e)
         {
             $errors[0] = 'Something went wrong, please try again later.';
             return response()->json(['errors'=>$errors], 401); 

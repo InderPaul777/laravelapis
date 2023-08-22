@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Validator;
 use Illuminate\Support\Facades\Route;
 use App\Models\Permission\Permission;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserController extends Controller
 {
@@ -260,6 +261,7 @@ class UserController extends Controller
                 $data[$count]['id'] = Str::uuid()->toString();
                 $data[$count]['name'] = $name;
                 $data[$count]['slug'] = $route->getName();
+                $data[$count]['created_by'] = JWTAuth::toUser(JWTAuth::getToken())->id;
                 $count++;
                 }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Helpers\Helper;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class RoleService
@@ -29,7 +30,7 @@ class RoleService
 
         $this->obj->name = $request->name;
         $this->obj->id = Str::uuid();
-        $this->obj->created_by = Str::uuid();
+        $this->obj->created_by = JWTAuth::toUser(JWTAuth::getToken())->id;
 
         if ($this->obj->save()) {
             return response()->json(["success" => "Role created succesfully"], Response::HTTP_OK);

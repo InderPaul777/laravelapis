@@ -27,10 +27,10 @@ Route::patch('/user/{id}', [UserController::class, 'update'])->name('updateUser'
 Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('deleteUser');
 
 //Auth::routes();
-// Route::middleware(['auth.jwt'])->group(function () {
+Route::middleware(['auth.jwt'])->group(function () {
     Route::post('/user/assignPermissions', [UserController::class, 'assignPermissions'])->name('assignPermissions')->middleware('check-permission');
     Route::post('/user/updatePermissions', [UserController::class, 'updatePermissions'])->name('updatePermissions')->middleware('check-permission');
-// });
+});
 
 Route::post('/user/registration', [FrontController::class, 'registration'])->name('registerUser');
 Route::post('/user/login', [FrontController::class, 'login'])->name('loginUser');
