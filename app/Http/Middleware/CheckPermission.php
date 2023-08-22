@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Permission\Permission;
 use Closure;
-
+use GuzzleHttp\Psr7\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 class CheckPermission
 {
     /**
@@ -16,8 +18,14 @@ class CheckPermission
     public function handle($request, Closure $next)
     {
 
-       // apply your permission logic here
-
+        $user = JWTAuth::toUser(JWTAuth::getToken());
+        // dd($user->id);
+        $permissoion =  \Request::route()->getName();
+        // dd($permissoion );
+        $PermissionId = Permission::where('slug', $permissoion)->pluck('id')->first();
+        dd($PermissionId ); 
+        //     return redirect()->back();
+        // }
         return $next($request);
     }
 }

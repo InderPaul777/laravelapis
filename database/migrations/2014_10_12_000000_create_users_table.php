@@ -23,8 +23,6 @@ class CreateUsersTable extends Migration
             $table->enum('is_active',[0,1])->default(0);
             $table->enum('force_change_password',[0,1])->default(0);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('role_id')->nullable();
-            $table->string('permissions')->nullable();
             $table->string('password')->nullable();
             $table->rememberToken()->nullable();
             $table->softDeletes();

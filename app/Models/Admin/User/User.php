@@ -5,18 +5,21 @@ namespace App\Models\Admin\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
+    
     protected $fillable = [
         'id',
         'first_name',
@@ -30,6 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'role_id',
         'permissions',
     ];
+
+    
  
     /**
      * The attributes that should be hidden for arrays.
@@ -49,7 +54,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    public $incrementing = false;
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *

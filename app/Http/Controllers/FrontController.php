@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Validator;
- 
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 class FrontController extends Controller
 {
     public $successStatus = 200;
@@ -21,7 +22,7 @@ class FrontController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','registration', 'forgotPassword', 'resetPassword', 'refreshToken', 'changePassword', 'refreshToken']]);
+      //  $this->middleware('auth:api', ['except' => ['login','registration', 'forgotPassword', 'resetPassword', 'refreshToken', 'changePassword', 'refreshToken']]);
     }
 
     /** 
@@ -80,7 +81,7 @@ class FrontController extends Controller
             return response()->json(['errors'=>$errors], 401);    
         }
         $credentials = $request->only('email', 'password');
-        $token = Auth::attempt($credentials);
+        $token = JWTAuth::attempt($credentials);
         if(!$token) {
             return response()->json([
                 'status' => 'error',
