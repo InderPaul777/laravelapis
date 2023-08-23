@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin\User;
 
+use App\Models\Role\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 class User extends Authenticatable implements JWTSubject
@@ -33,6 +35,10 @@ class User extends Authenticatable implements JWTSubject
         'role_id',
         'permissions',
     ];
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 
     
  
@@ -74,4 +80,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    
 }
