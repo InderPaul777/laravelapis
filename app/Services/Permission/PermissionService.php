@@ -21,7 +21,7 @@ class PermissionService
     {
         $response = Validator::make($request->all(), [
             'name' => "required|unique:permissions",
-            'slug' => "required|unique:permissions"
+            'slug' => "required"
         ]);
 
         if ($response->fails()) {
@@ -29,13 +29,27 @@ class PermissionService
         }
 
         $this->obj->name = $request->name;
-        $this->obj->slug = $request->slug;
+        $this->obj->slug = $this->generateSlug($request->slug);
         $this->obj->id = Str::uuid();
         $this->obj->created_by = Str::uuid();
 
         if ($this->obj->save()) {
             return response()->json(["success" => "Permission created succesfully"], Response::HTTP_OK);
         }
+    }
+
+    public function generateSlug($name)
+    {
+        if ($this->obj->whereSlug($slug = Str::slug($name))->exists()) {
+            for($i=1;$i<=100;$i++){
+                if ($this->obj->whereSlug($slug = Str::slug($name.'-'.$i))->exists()) {
+                    continue;
+                }else {
+                    return $name.'-'.$i;
+                }
+            }
+        }
+        return $slug;
     }
     public function getAllPermissions()
     {
