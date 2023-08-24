@@ -23,6 +23,9 @@ class CheckPermission
 
 
         $user = (JWTAuth::toUser(JWTAuth::getToken()));
+      if(isset($user->role) && 1 == $user->role ){
+        return $next($request);
+      }
         $permissoion =  \Request::route()->getName(); 
         //DB::enableQueryLog();
         $havePermission = DB::table('users')

@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->tinyInteger('force_change_password')->default(0)->comment('1-Yes,0-No');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
+            $table->tinyInteger('role')->default(2)->comment('1-Admin,2-User');
             $table->rememberToken()->nullable();
             $table->softDeletes();
             $table->timestamps();

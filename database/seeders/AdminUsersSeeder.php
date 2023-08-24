@@ -1,0 +1,27 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use DB;
+class AdminUsersSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::table('users')->insert([
+            'id'=> Str::uuid()->toString(),
+            'first_name' => 'User1',
+            'last_name'=>'admin',
+            'email' => 'user1@email.com',
+            'role'=>1,
+            'verified'=>1,
+            'is_active'=>1,
+            'password' => bcrypt('password'),
+        ]);
+    }
+}
