@@ -20,7 +20,8 @@ class PermissionService
     public function createPermission($request)
     {
         $response = Validator::make($request->all(), [
-            'name' => "required|unique:permissions"
+            'name' => "required|unique:permissions",
+            'slug' => "required|unique:permissions"
         ]);
 
         if ($response->fails()) {
@@ -28,6 +29,7 @@ class PermissionService
         }
 
         $this->obj->name = $request->name;
+        $this->obj->slug = $request->slug;
         $this->obj->id = Str::uuid();
         $this->obj->created_by = Str::uuid();
 
