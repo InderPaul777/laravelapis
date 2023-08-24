@@ -19,9 +19,9 @@ class CreateUsersTable extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('email')->unique();
-            $table->enum('verified',[0,1])->default(0);
-            $table->enum('is_active',[0,1])->default(0);
-            $table->enum('force_change_password',[0,1])->default(0);
+            $table->tinyInteger('verified')->default(0)->comment('1-Verified,0-Not Verifies');
+            $table->tinyInteger('is_active')->default(0)->comment('1-Active,0-Inactive');
+            $table->tinyInteger('force_change_password')->default(0)->comment('1-Yes,0-No');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->rememberToken()->nullable();

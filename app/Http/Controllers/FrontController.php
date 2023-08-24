@@ -53,11 +53,11 @@ class FrontController extends Controller
             $data['middle_name'] = $input['middle_name'];
             }
             $data['email'] = $input['email'];
-            $data['verified'] = 1;
-            $data['is_active'] = 1;
+            $data['verified'] = 0;
+            $data['is_active'] = 0;
             $data['password'] = bcrypt($input['password']);
             $user = User::create($data);
-            Mail::to($input['email'])->send(new FrontRegisterMail($data));
+            Mail::to($input['email'])->send(new FrontRegisterMail($data)); // Send link to
             return response()->json(['message'=>'Account created successfully, password details sent on mail.'], $this->successStatus);
         }
         catch(\Exception $e)
@@ -78,26 +78,22 @@ class FrontController extends Controller
             'password' => 'required|string',
         ]);
         if ($validator->fails()) {
-            $errors[0] = $validator->errors();
-            return response()->json(['errors'=>$errors], 401);    
+            $errors = $validator->errors();       
+            return response()->json(['errors'=>$validator->messages()->all()], 401);    
         }
         $credentials = $request->only('email', 'password');
+
         $token = JWTAuth::attempt($credentials);
         if(!$token) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Unauthorized',
+            return response()->json([               
+                'errors' => array('Invalid Username/password'),
             ], 401);
+        }else{
+            // Validate Veriied/Is_active/force_change_password
+            return response()->json([ 'token' => $token]);
         }
-        $user = Auth::user();
-        return response()->json([
-            'status' => 'success',
-            'user' => $user,
-            'authorisation' => [
-                'token' => $token,
-                'type' => 'bearer',
-            ]
-        ]);
+      
+        
     }
 
     /** 
