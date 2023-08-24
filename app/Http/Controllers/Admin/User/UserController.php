@@ -32,7 +32,7 @@ class UserController extends Controller
         ]);
         if ($validator->fails()) {
             $errors[0] = $validator->errors();
-            return response()->json(['errors' => $errors], 401);
+            return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
             $data = [];
@@ -48,6 +48,7 @@ class UserController extends Controller
             $data['password'] = bcrypt($sendPassword);
             $user = User::create($data);
             if (config('app.SEND_LINK_OR_PASSWORD_IN_MAIL') == 0) {
+
                 $data['sendPassword'] = 'Your password is (' . $sendPassword . ').';
             } else {
                 $data['sendPassword'] = 'Your create password link is here http://127.0.0.1:8000/api/user/setPassword/' . $data['id'];
@@ -74,7 +75,7 @@ class UserController extends Controller
             'password' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
             $input = $request->all();
@@ -99,13 +100,13 @@ class UserController extends Controller
             'permissions' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
             $data = [];
             $input = $request->all();
             $data['permissions'] = implode(',', $input['permissions']);
-            $user = User::where('id', $input['user_id'])->update($data);
+            $user = User::where('id', $input['user_id'])->update($data); // Need to change
             return response()->json(['message' => 'Permissions assigned successfully.'], $this->successStatus);
         } catch (\Exception $e) {
             $errors[0] = 'Something went wrong, please try again later.';
@@ -124,7 +125,7 @@ class UserController extends Controller
             'user_id' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
             $data['permissions']  = '';
@@ -132,7 +133,7 @@ class UserController extends Controller
             if (!empty($input['permissions'])) {
                 $data['permissions'] = implode(',', $input['permissions']);
             }
-            $user = User::where('id', $input['user_id'])->update($data);
+            $user = User::where('id', $input['user_id'])->update($data); //need to change
             return response()->json(['message' => 'Permissions updated successfully.'], $this->successStatus);
         } catch (\Exception $e) {
             $errors[0] = 'Something went wrong, please try again later.';

@@ -40,7 +40,7 @@ class FrontController extends Controller
         ]);
         if ($validator->fails()) {
             $errors[0] = $validator->errors();
-            return response()->json(['errors'=>$errors], 401);    
+            return response()->json(['errors'=>$validator->messages()->all()], 401);    
         }
         try
         {
@@ -90,7 +90,7 @@ class FrontController extends Controller
             ], 401);
         }else{
             // Validate Veriied/Is_active/force_change_password
-            return response()->json([ 'token' => $token]);
+            return response()->json(['expires_in' => auth()->factory()->getTTL() * 60,'token' => $token]);
         }
       
         
@@ -128,8 +128,7 @@ class FrontController extends Controller
     {
         try{
             return response()->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
+                'token' => $token,               
                 'expires_in' => auth()->factory()->getTTL() * 60
             ]);
         }catch(TokenInvalidException $e){
@@ -148,7 +147,7 @@ class FrontController extends Controller
             'email' => 'required|email|exists:users',
         ]);
         if ($validator->fails()) { 
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['errors'=>$validator->errors()->all()], 401);            
         }
         try
         {

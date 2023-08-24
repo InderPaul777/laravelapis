@@ -22,14 +22,13 @@ use App\Http\Middleware\CheckPermission;
 
 Route::post('/user/registration', [FrontController::class, 'registration'])->name('registerUser');
 Route::post('/user/login', [FrontController::class, 'login'])->name('loginUser');
-Route::get('/refreshToken', [FrontController::class, 'refreshToken'])->name('refreshToken');
 Route::post('/user/forgotPassword', [FrontController::class, 'forgotPassword'])->name('forgotPassword');
 Route::post('/user/resetPassword', [FrontController::class, 'resetPassword'])->name('resetPassword');
 
+Route::get('/refreshToken', [FrontController::class, 'refreshToken'])->name('refreshToken')->middleware('auth.jwt');
+
 Route::middleware(['auth.jwt', 'check-permission'])->group(function () {
     Route::post('/user/changePassword/{id}', [FrontController::class, 'changePassword'])->name('changePassword');
-
-
     Route::get('/permissions-update', [UserController::class, 'permissions']); //insert permission to database
     
     //User routes
