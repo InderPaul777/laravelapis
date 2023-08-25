@@ -18,7 +18,7 @@ Introducing our cutting-edge HealthTech platform, revolutionizing the way you ac
    $ git clone https://github.com/InderPaul777/laravelapis.git
 2. Next we need to install the dependency packages by run below command.<br>
    $ composer update
-3. Next we need to run the mgrations.<br>
-   $ php artisan migrate
+3. Next we need to run the mgrations and seeding.<br>
+   $ php artisan migrate:fresh --seed
 4. Finally we will run the project.<br>
    $ php artisan serve
