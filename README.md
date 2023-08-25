@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
+## About Telehealth
 
 Introducing our cutting-edge HealthTech platform, revolutionizing the way you access medical care. Our online and offline doctor booking system seamlessly connects patients with a network of experienced healthcare professionals. With just a few clicks, you can schedule appointments, receive instant confirmations, and even choose between in-person visits or virtual consultations. Our user-friendly interface prioritizes your convenience while maintaining the highest standards of security and privacy. Say goodbye to long waiting times and hello to a new era of efficient, patient-centric healthcare booking. Your well-being is our priority, and with our HealthTech system, managing your health has never been easier.
 
@@ -15,4 +15,10 @@ Introducing our cutting-edge HealthTech platform, revolutionizing the way you ac
 ## How to run
 
 1. First we need to clone the project. Run the below command and run in your cmd.
-   $ git clone 
+   $ git clone https://github.com/InderPaul777/laravelapis.git
+2. Next we need to install the dependency packages by run below command.
+   $ composer update
+3. Next we need to run the mgrations.
+   $ php artisan migrate
+4. Finally we will run the project.
+   $ php artisan serve
