@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Admin\User\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
-use App\Mail\RegisterMail;
+use App\Jobs\RegisterEmailJob;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Models\Permission\Permission;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
+use App\Models\UserPermission;
 
 class UserController extends Controller
 {
@@ -44,16 +46,16 @@ class UserController extends Controller
             $data['email'] = $input['email'];
             $data['verified'] = $input['verified'];
             $data['is_active'] = $input['is_active'];
+            $data['force_change_password'] = 0;
             $sendPassword = rand();
             $data['password'] = bcrypt($sendPassword);
             $user = User::create($data);
             if (config('app.SEND_LINK_OR_PASSWORD_IN_MAIL') == 0) {
-
                 $data['sendPassword'] = 'Your password is (' . $sendPassword . ').';
             } else {
-                $data['sendPassword'] = 'Your create password link is here http://127.0.0.1:8000/api/user/setPassword/' . $data['id'];
+                $data['sendPassword'] = 'Your create password link is here ' . config('app.url') . '/api/user/setPassword/' . $data['id'];
             }
-            Mail::to($input['email'])->send(new RegisterMail($data));
+            dispatch(new RegisterEmailJob($data));
             return response()->json(['message' => 'Account created successfully, password details sent on mail.'], $this->successStatus);
         } catch (\Exception $e) {
             $errors[0] = 'Something went wrong, please try again later.';
@@ -103,12 +105,38 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
-            $data = [];
             $input = $request->all();
-            $data['permissions'] = implode(',', $input['permissions']);
-            $user = User::where('id', $input['user_id'])->update($data); // Need to change
+            $permissions = $input['permissions'];
+            // $existing = DB::table('user_permissions')->where('user_id', $input['user_id'])->pluck('permission_id')->toArray();
+
+            $userPermissions = UserPermission::where('user_id', $input['user_id'])->pluck('permission_id')->toArray();
+            // dd($userPermissions);
+             $deleteThese = array_diff($userPermissions, $permissions);
+            if(!empty($deleteThese)){                
+                DB::table('user_permissions')->whereIn('permission_id', $deleteThese)->where('user_id', $input['user_id'])->delete();
+            }
+            $saveThese = array_diff($permissions, $userPermissions);
+            $user = JWTAuth::user();
+            if (!empty($saveThese)) {
+                $fillable = [];
+                foreach ($saveThese as $key => $these) {
+                    $existPermission = Permission::where('id', $these)->first();
+                    if(!empty($existPermission)) {
+                        $fillable[$key]['id'] = Str::uuid()->toString();
+                        $fillable[$key]['user_id'] = $input['user_id'];
+                        $fillable[$key]['permission_id'] = $these;
+                        $fillable[$key]['created_by'] = $user->id;
+                        $fillable[$key]['created_at'] = date('Y-m-d H:i:s');
+                    }
+                    $entered = UserPermission::insert($fillable);
+                    if ($entered === 0) {
+                        return response()->json(['message' => 'Something went wrong, please try again later.'], 500);
+                    }
+                }
+            }
             return response()->json(['message' => 'Permissions assigned successfully.'], $this->successStatus);
         } catch (\Exception $e) {
+            echo $e->getMessage();
             $errors[0] = 'Something went wrong, please try again later.';
             return response()->json(['errors' => $errors], 401);
         }
@@ -128,12 +156,35 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->messages()->all()], 401);
         }
         try {
-            $data['permissions']  = '';
             $input = $request->all();
-            if (!empty($input['permissions'])) {
-                $data['permissions'] = implode(',', $input['permissions']);
+            $permissions = $input['permissions'];
+            // $existing = DB::table('user_permissions')->where('user_id', $input['user_id'])->pluck('permission_id')->toArray();
+
+            $userPermissions = UserPermission::where('user_id', $input['user_id'])->pluck('permission_id')->toArray();
+            // dd($userPermissions);
+             $deleteThese = array_diff($userPermissions, $permissions);
+            if(!empty($deleteThese)){                
+                DB::table('user_permissions')->whereIn('permission_id', $deleteThese)->where('user_id', $input['user_id'])->delete();
             }
-            $user = User::where('id', $input['user_id'])->update($data); //need to change
+            $saveThese = array_diff($permissions, $userPermissions);
+            $user = JWTAuth::user();
+            if (!empty($saveThese)) {
+                $fillable = [];
+                foreach ($saveThese as $key => $these) {
+                    $existPermission = Permission::where('id', $these)->first();
+                    if(!empty($existPermission)) {
+                        $fillable[$key]['id'] = Str::uuid()->toString();
+                        $fillable[$key]['user_id'] = $input['user_id'];
+                        $fillable[$key]['permission_id'] = $these;
+                        $fillable[$key]['created_by'] = $user->id;
+                        $fillable[$key]['updated_at'] = date('Y-m-d H:i:s');
+                    }
+                    $entered = UserPermission::insert($fillable);
+                    if ($entered === 0) {
+                        return response()->json(['message' => 'Something went wrong, please try again later.'], 500);
+                    }
+                }
+            }
             return response()->json(['message' => 'Permissions updated successfully.'], $this->successStatus);
         } catch (\Exception $e) {
             $errors[0] = 'Something went wrong, please try again later.';
@@ -234,10 +285,10 @@ class UserController extends Controller
     {
         $data = [];
         $count = 0;
-        foreach (Route::getRoutes()->getIterator() as $route) {            //$routes[] = $route->uri;
+        foreach (Route::getRoutes()->getIterator() as $route) { //$routes[] = $route->uri;
             if (str_contains($route->uri, 'api') && $route->getName() != '') {
                 $countPermissions = Permission::where('slug', $route->getName())->count();
-                if (0 ==  $countPermissions) {
+                if (0 == $countPermissions) {
                     $name = ucwords(implode(' ', preg_split('/(?=[A-Z])/', $route->getName())));
                     $data[$count]['id'] = Str::uuid()->toString();
                     $data[$count]['name'] = $name;

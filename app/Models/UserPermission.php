@@ -5,14 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ResetCodePassword extends Model
+class UserPermission extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'email',
-        'code',
-        'created_at',
-    ];
+    protected $fillable = ['id','permission_id','user_id','created_by'];
     public $timestamps = true;
 }

@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Admin\User\User;
 use App\Models\ResetCodePassword;
 use Illuminate\Support\Str;
-use App\Mail\FrontRegisterMail;
-use App\Mail\SendCodeMail;
+use App\Jobs\FrontRegisterEmailJob;
+use App\Jobs\SendCodeEmailJob;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -55,9 +55,10 @@ class FrontController extends Controller
             $data['email'] = $input['email'];
             $data['verified'] = 0;
             $data['is_active'] = 0;
+            $data['force_change_password'] = 1;
             $data['password'] = bcrypt($input['password']);
             $user = User::create($data);
-            Mail::to($input['email'])->send(new FrontRegisterMail($data)); // Send link to
+            dispatch(new FrontRegisterEmailJob($data));
             return response()->json(['message'=>'Account created successfully, password details sent on mail.'], $this->successStatus);
         }
         catch(\Exception $e)
@@ -84,16 +85,21 @@ class FrontController extends Controller
         $credentials = $request->only('email', 'password');
 
         $token = JWTAuth::attempt($credentials);
-        if(!$token) {
-            return response()->json([               
+        $user = User::where('email',$credentials['email'])->first();
+        if (!$token) {
+            return response()->json([
                 'errors' => array('Invalid Username/password'),
             ], 401);
-        }else{
+        } elseif (0 == $user->verified) { // Validate Veriied
             // Validate Veriied/Is_active/force_change_password
-            return response()->json(['expires_in' => auth()->factory()->getTTL() * 60,'token' => $token]);
+            return response()->json(['errors' => 'Please verify your email'], 401);
+        } elseif (0 == $user->is_active) { //Is_active
+            return response()->json(['errors' => 'Your Account is not active, Please contact admin'], 401);
+        }elseif (0 == $user->force_change_password) {//force_change_password
+            return response()->json(['errors' => 'You have not changed you password yet, please change the password'], 401);
+        } else {
+            return response()->json(['expires_in' => auth()->factory()->getTTL() * 60, 'token' => $token]);
         }
-      
-        
     }
 
     /** 
@@ -154,8 +160,12 @@ class FrontController extends Controller
             ResetCodePassword::where('email', $request->email)->delete();
             $data['email'] = $request->email;
             $data['code'] = mt_rand(100000, 999999);
+            $datasend = []; 
+            $datasend['email'] = $request->email;
+            $datasend['codes'] = $data['code'];
             $codeData = ResetCodePassword::create($data);
-            Mail::to($request->email)->send(new SendCodeMail($codeData->code));
+            $datasend['code'] = $codeData->code;
+            dispatch(new SendCodeEmailJob($datasend));
             return response(['message' => 'Password reset code is sent on your email.'], 200);
         }
         catch(Exception $e)

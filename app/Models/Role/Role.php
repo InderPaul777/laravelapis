@@ -9,6 +9,7 @@ class Role extends Model
 {
     use HasFactory;
     public $incrementing = false;
+    public $timestamps = true;
 
     public function permissions()
     {
