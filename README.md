@@ -25,4 +25,6 @@ Our user-friendly interface prioritizes your convenience while maintaining the h
 5. Next we need to run the seeder.<br>
    $ php artisan db:seed
 6. Finally we will run the project.<br>
-   $ php artisan serve
+   $ php artisan serve<br><br>
+   Copy below url and run on your machines browser:<br>
+   http://127.0.0.1:8000
