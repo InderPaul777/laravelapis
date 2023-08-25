@@ -9,7 +9,8 @@
 
 ## About Telehealth
 
-Introducing our cutting-edge HealthTech platform, revolutionizing the way you access medical care. Our online and offline doctor booking system seamlessly connects patients with a network of experienced healthcare professionals. With just a few clicks, you can schedule appointments, receive instant confirmations, and even choose between in-person visits or virtual consultations. Our user-friendly interface prioritizes your convenience while maintaining the highest standards of security and privacy. Say goodbye to long waiting times and hello to a new era of efficient, patient-centric healthcare booking. Your well-being is our priority, and with our HealthTech system, managing your health has never been easier.
+Introducing our cutting-edge HealthTech platform, revolutionizing the way you access medical care. Our online and offline doctor booking system seamlessly connects patients with a network of experienced healthcare professionals. With just a few clicks, you can schedule appointments, receive instant confirmations, and even choose between in-person visits or virtual consultations.
+Our user-friendly interface prioritizes your convenience while maintaining the highest standards of security and privacy. Say goodbye to long waiting times and hello to a new era of efficient, patient-centric healthcare booking. Your well-being is our priority, and with our HealthTech system, managing your health has never been easier.
 
 
 ## How to run
