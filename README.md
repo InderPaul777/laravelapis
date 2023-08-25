@@ -18,7 +18,10 @@ Introducing our cutting-edge HealthTech platform, revolutionizing the way you ac
    $ git clone https://github.com/InderPaul777/laravelapis.git
 2. Next we need to install the dependency packages by run below command.<br>
    $ composer update
-3. Next we need to run the mgrations and seeding.<br>
-   $ php artisan migrate:fresh --seed
-4. Finally we will run the project.<br>
+3. Now we need to create a .env file at root folder and update the databse credentials, email smtp details etc.<br>
+4. Next we need to run the mgrations.<br>
+   $ php artisan migrate
+5. Next we need to run the seeder.<br>
+   $ php artisan db:seed
+6. Finally we will run the project.<br>
    $ php artisan serve
